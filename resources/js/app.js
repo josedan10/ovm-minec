@@ -4,6 +4,8 @@
  * building robust, powerful web applications using Vue and Laravel.
  */
 
+
+import VueBootstrapTypeahead from 'vue-bootstrap-typeahead'
 require("./bootstrap");
 
 window.Vue = require("vue");
@@ -34,6 +36,8 @@ library.add(far);
 Vue.component("font-awesome-icon", FontAwesomeIcon);
 
 import BootstrapVue from "bootstrap-vue";
+
+Vue.component('vue-bootstrap-typeahead', VueBootstrapTypeahead)
 
 Vue.use(BootstrapVue);
 
@@ -68,6 +72,9 @@ import "vue2-editor/dist/vue2-editor.css";
 import 'quill/dist/quill.core.css';
 import 'quill/dist/quill.bubble.css';
 import 'quill/dist/quill.snow.css';
+
+
+import store from './stores/index.js'
 
 // Copy to clipboard library
 import VueClipboard from 'vue-clipboard2';
@@ -115,6 +122,8 @@ Vue.component("header-manager", require("./components/admin/HeaderManager.vue").
 
 Vue.component("aside-manager", require("./components/admin/AsideManager.vue").default);
 
+Vue.component("check-requirements", require("./components/admin/permissions/CheckRequirements.vue").default);
+
 Vue.component("page-template", require("./views/PageTemplate.vue").default);
 
 Vue.component("faqs", require("./views/Faqs.vue").default);
@@ -133,6 +142,18 @@ Vue.component("legal-view", require("./views/LegalView.vue").default);
 
 Vue.component("cabecera", require("./components/Cabecera.vue").default);
 
+Vue.component("authorizations-list", require("./components/permissions/AuthorizationsList.vue").default);
+
+Vue.component("permissions", require("./components/permissions/Permissions.vue").default);
+
+Vue.component("permissions-list", require("./components/permissions/PermissionsList.vue").default);
+
+Vue.component("permit-form", require("./components/permissions/PermitForm.vue").default);
+
+Vue.component("comercial-export-species-requirements", require("./components/permissions/requirements/ComercialExportSpeciesRequirements").default);
+
+Vue.component("upload-requirements", require("./components/permissions/requirements/UploadRequirements").default);
+
 Vue.component("navi", require("./components/Nav.vue").default);
 
 Vue.component("navmobile", require("./components/Nav-mobile.vue").default);
@@ -144,6 +165,7 @@ Vue.component("error", require("./components/Error404.vue").default);
 if ($("#app").length !== 0) {
 
     let app = new Vue({
-        el: "#app"
+        el: "#app",
+        store: store,
     });
 }

@@ -5,9 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
+
 
 class UserController extends Controller
 {
+
+    use SendsPasswordResetEmails;
     /**
      * Display a listing of the resource.
      *
@@ -44,7 +48,7 @@ class UserController extends Controller
             'email' => 'required|unique:users|email',
             'is_active' => 'required|boolean',
             'photo' =>  'nullable|sometimes|mimes:jpeg,jpg,png|image|max:1024',
-            'role' => 'required|in:admin,writer',
+            'role' => 'required|in:admin,writer,perosna_juridica,persona_natural',
             'password' => 'required|confirmed'
         ])) {
             if ($request->hasFile('photo')) {
@@ -63,14 +67,15 @@ class UserController extends Controller
             try {
                 $values['password'] = \bcrypt($values['password']);
                 User::create($values);
+                return response('Usuario creado', 200);
+
             } catch (Exception $err) {
                 return response($err->getMessage(), 500);
             }
-
-            return response('Usuario creado', 200);
         }
     }
-
+    
+    
     /**
      * Display the specified resource.
      *
@@ -109,7 +114,7 @@ class UserController extends Controller
             'email' => 'email',
             'is_active' => 'boolean',
             'photo' =>  'nullable|mimes:jpeg,jpg,png|image|max:2048',
-            'role' => 'in:admin,writer'
+            'role' => 'in:admin,writer,perosna_juridica,persona_natural'
         ])) {
 
             if ($request->hasFile('photo')) {

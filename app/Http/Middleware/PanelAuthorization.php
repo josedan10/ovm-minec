@@ -21,5 +21,6 @@ class PanelAuthorization
                 || $userRole == 'writer'
                 || $userRole == 'superuser' ?
                 $next($request) : redirect('home');
+        
     }
 }
