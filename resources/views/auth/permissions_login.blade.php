@@ -5,18 +5,18 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header">{{ __('Login (Permisos MINEC)') }}</div>
+                <div class="card-header">{{ __('Sistema de Permisos MINEC') }}</div>
 
 
                 <div class="card-body">
                 @if (\Session::has('errors'))
                     <div class="alert alert-danger">
-                        <ul>
+                        <ul> 
                             <li>{{ \Session::get(errors)}}</li>
                         </ul>               
                     </div>
                 @endif
-                    <form method="POST" action="{{ url('/solicitante/loginPermissions') }}" aria-label="{{ __('Login') }}">
+                    <form method="POST" action="{{ url('/solicitante/loginClient') }}" aria-label="{{ __('Login') }}">
                         @csrf
 
                         <div class="form-group row">
@@ -62,7 +62,7 @@
                                     {{ __('Login') }}
                                 </button>
 
-                                <a class="btn btn-link" href="{{ route('password.request') }}">
+                                <a class="btn btn-link" href="{{ url('solicitante/resetPassword') }}">
                                     {{ __('Forgot Your Password?') }}
                                 </a>
                             </div>

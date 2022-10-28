@@ -16,19 +16,21 @@ class CreatePermitsTable extends Migration
         Schema::create('permits', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('request_permit_no');
+            $table->string('sistra')->nullable();
             $table->string('valid_until')->nullable(); //es una fecha valido hasta
-            $table->text('special_conditions', 500)->nullable();
-            $table->string('purpose', 60);
+            $table->string('purpose', 60);            
             $table->string('status');
-            $table->string('observations')->nullable();
             $table->string('transportation_way')->nullable();
             $table->string('consigned_to')->nullable();
             $table->string('country')->nullable();
+            $table->string('country_code')->nullable();
             $table->string('landing_port')->nullable();
             $table->string('shipment_port')->nullable();
             $table->string('destiny_place')->nullable();
             $table->string('departure_place')->nullable();
             $table->string('departure_date')->nullable();
+            $table->string('committed_date')->nullable();
+            $table->string('collected_time')->nullable(); //campo que llevara el tiempo  para cargar todos los recaudos
             $table->timestamps();
         });
     }

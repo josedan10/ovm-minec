@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddClientIdToPermits extends Migration
+class ChangeDefinitionGlosary extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,8 @@ class AddClientIdToPermits extends Migration
      */
     public function up()
     {
-        Schema::table('permits', function (Blueprint $table) {
-            $table->foreignId('client_id')->references('id')->on('clients')->onDelete('cascade');
+        Schema::table('glosary', function (Blueprint $table) {
+            $table->longText('description')->change();
         });
     }
 
@@ -25,8 +25,8 @@ class AddClientIdToPermits extends Migration
      */
     public function down()
     {
-        Schema::table('permits', function (Blueprint $table) {
-            //
+        Schema::table('glosary', function (Blueprint $table) {
+            $table->string('description', 100)->change();
         });
     }
 }

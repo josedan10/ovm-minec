@@ -63,13 +63,19 @@ class User extends Model
         return $this->hasMany('App\Models\Survey');
     }
     
-    public function officials()
+    public function official()
     {
-        return $this->hasMany(Official::class);
+        return $this->hasOne(Official::class);
     }
-    public function clients()
+    public function client()
     {
-        return $this->hasMany(Client::class);
+        return $this->hasOne(Client::class);
+    }
+    public function phones(){
+        return $this->belongsToMany(Phone::class,
+                                        'phone_user',
+                                        'user_id',
+                                        'phone_id');
     }
     // methods
     public function isWriter()
@@ -78,10 +84,10 @@ class User extends Model
     }
     public function isPersonLegal()
     {
-        return $this->role == 'perosna_juridica';
+        return $this->role == 'juridica';
     }
     public function isNaturalPerson()
     {
-        return $this->role == 'perosna_natural';
+        return $this->role == 'natural';
     }
 }

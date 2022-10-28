@@ -3,6 +3,8 @@
 use App\Http\Controllers\SetPasswordController;
 
 use App\Http\Controllers\ApiController;
+
+use App\Http\Controllers\AuthController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -37,6 +39,12 @@ use App\Http\Controllers\ApiController;
 
 use Illuminate\Support\Facades\Artisan;
 
+Route::get('/secret/resetPassword', [AuthController::class, 'viewRestoreOfficialPassword']);
+Route::post('/test/sendEmailResetPassword', [AuthController::class, 'sendEmailOfficialResetPassword']);
+Route::get('/secret/restorePassword/{token}', [AuthController::class, 'restoreOfficialPassword'])->name('restorePassword');
+Route::post('/secret/saveNewPassword', [AuthController::class, 'resetPasswordOfficial']);
+
+
 Route::get('/preguntas-frecuentes', 'PageController@faqsView')->name('preguntas-frecuentes');
 Route::group(['prefix' => 'como-participar'], function () {
     Route::get('/encuestas', 'PageController@encuestasView')->name('encuestas');
@@ -44,7 +52,8 @@ Route::group(['prefix' => 'como-participar'], function () {
     Route::get('/{slug}', 'PageController@newQuestionView')->name('pregunta-adicional');
 });
 
-Route::get('/legislacion/{title}', 'PageController@laws');
+Route::get('/legislacion', 'PageController@laws');
+Route::get('/glosario', 'PageController@glosaryView');
 
 Route::group(['prefix' => 'recursos'], function () {
     Route::get('/glosario', 'PageController@glosaryView');
@@ -83,16 +92,26 @@ Route::group(['prefix' => 'recursos'], function () {
 
 // // Frontend routes for "Transgénico"
 // Route::get('/transgenico', function () {
-//     return view('welcome');
+//     return view('welcome'); 
 // });
 
+// Route::get('/register', ['AuthController@index']);
 Auth::routes();
 
-Route::get('/registro_solicitante', 'AuthController@index')->name('registerSolicitante');
-Route::get('/loginPermissions', 'Auth\PermissionsLoginController@showLoginForm')->name('loginPermissions');
+
+Route::get('/register', [AuthController::class, 'index'])->name('register');
+// Route::get('/login', 'Auth\PermissionsLoginController@showLoginForm')->name('login');
+Route::get('/loginClient', 'Auth\PermissionsLoginController@showLoginForm')->name('loginClient');
+Route::get('/login', 'Auth\LoginController@showLoginForm')->name('login');
+Route::get('/reset', 'Auth\ResetPasswordController@sendClientResetEmail')->name('emailToReset');
+Route::get('/recoveryPassword', 'Auth\ResetPasswordController@recoveryClientPassword')->name('recoveryPassword');
+Route::post('/password/reset', 'Auth\ResetPasswordController@resetClientPassword')->name('resetPassword');
+
+Route::get('permitInfo/{id}', 'PermissionController@showPermitInfo')->name('showPermitInfo');
+Route::get('createFolder/', 'PermissionController@createFolder');
+Route::post('createFolder/', 'PermissionController@createFolder');
 
 Route::middleware('auth:api')->get('/home', 'HomeController@index')->name('home');
-
 
 Route::middleware(['auth', 'panel.auth'])->group(function () {
     Route::group(['prefix' => 'dashboard'], function () {
@@ -197,13 +216,61 @@ Route::middleware(['auth', 'panel.auth'])->group(function () {
 
         // Permissions Routes
         Route::get('/permissions', 'PermissionController@getList');
+
+        Route::get('/permissions/table', 'PermissionController@showPermitsTableView');
+
+        Route::get('/permissions/check/{id}', 'PermissionController@showChecklist');
+
+        Route::get('/permissions/requerimentsView', 'RequerimentController@index');
+        Route::get('/permissions/permitsView', 'PermissionController@showPermitsView');
+
+        Route::get('/permissions/getDepartaments', 'DepartamentController@index');
+        Route::get('/permissions/getRequeriments', 'RequerimentController@getRequeriments');
+        
+        Route::post('/permissions/addPermit', 'IntoPermitDbController@addPermitType');
+        Route::post('/permissions/editPermit/{id}', 'IntoPermitDbController@editPermitType');
+        Route::post('/permissions/deletePermit/{id}', 'IntoPermitDbController@deletePermitType');
+        
+        Route::post('/permissions/addRequeriment', 'RequerimentController@addRequeriment');
+        Route::post('/permissions/editRequeriment/{id}', 'RequerimentController@editRequeriment');
+        Route::post('/permissions/deleteRequeriment/{id}', 'RequerimentController@deleteRequeriment');
+
         Route::post('/permissions/uploadSpecieFile', 'PermissionController@storeSpecieFile');
         Route::post('/permissions/uploadFile', 'PermissionController@storeFile');
-        Route::get('/permissions/check/{id}', 'PermissionController@showChecklist');
+
         Route::post('/permissions/check/{id}', 'PermissionController@checkPermit');
         Route::post('/permissions/checkSpecies/{id}', 'PermissionController@checkSpecies');
+        
+        Route::post('/permissions/validPermit/{id}', 'PermissionController@validPermit');
+        Route::post('/permissions/sendErrors/{id}', 'PermissionController@sendErrors');
+        Route::get('/permissions/viewPermit/{id}', 'PermissionController@showAprovedPermit');
+        
+        Route::get('/permissions/graphics', 'StatisticsController@index');
+        Route::get('/permissions/graphics/permitTypeStatistics', 'StatisticsController@showPermitTypeStatistics');
+        Route::get('/permissions/graphics/speciesStatistics', 'StatisticsController@showSpeciesStatistics');
+
+        Route::post('/permissions/graphics/selectSpecies', 'StatisticsController@selectSpecies');
+
+        Route::get('/permissions/graphics/permitsDateStatistics', 'StatisticsController@showPermitForDateStatistics');
+        
+        Route::get('/permissions/annual-report', 'StatisticsController@showAnnualReport');
+
+        Route::post('/permissions/graphics/selectDate', 'StatisticsController@selectDate');
+        Route::post('/permissions/graphics/exportSpeciesData', 'StatisticsController@exportSpeciesData');
+        Route::get('/permissions/graphics/exportSpeciesData', 'StatisticsController@exportSpeciesData');
+        Route::get('/permissions/graphics/exportPermitsData', 'StatisticsController@exportPermitsData');
+        
+        Route::get('/permissions/annual-report/export', 'StatisticsController@exportAnnualReport');
+
+        Route::post('/searchSpecie', 'ApiController@api_cites_filter');
+
+        Route::get('/species/speciesDetails', 'SpecieController@showSpeciesDetails');
+        Route::post('/species/registerSpecie', 'SpecieController@registerSpecie');
+        Route::post('/species/editSpecie', 'SpecieController@editSpecie');
+        Route::post('/species/searchSpecieData', 'SpecieController@api_cites');
     });
 });
+Route::get('/dataQr/{id}', 'PermissionController@getDataQr');
 
 // Question client routes
 Route::get('/questions', 'QuestionController@getFAQs');
@@ -232,8 +299,9 @@ Route::get('/clear-app', function () {
     return "Clear the app deployment completed";
 });
 // Render files
-Route::get('/files/permissions/{name}', 'PermissionController@showFile');
-Route::get('/files/{name}', 'LegalFileController@show');
+Route::get('/files/requeriments/{user}/{formalitie}/{permit}/{file_url}', 'PermissionController@showFile');
+Route::get('/files/requeriments/{user}/personals/{file_url}', 'PermissionController@showFilePersonal');
+Route::get('/files/requeriments/{user}/{file_url}', 'LegalFileController@show');
 
 Route::get('/forums', ['uses' => '\DevDojo\Chatter\Controllers\ChatterController@index'])->name('chatter.home');         
 Route::get('/forums.atom', ['uses' => '\DevDojo\Chatter\Controllers\ChatterAtomController@index'])->name('chatter.atom');
@@ -257,13 +325,6 @@ Route::post('/sendEmail', [SetPasswordController::class, 'sendEmail']);
 Route::get('/setPassword/{token}', [SetPasswordController::class, 'showSetPasswordForm'])->name('set.password.get');
 Route::post('/setPasswordSubmit', [SetPasswordController::class, 'submitSetPasswordForm'])->name('set.password.submit');
 
-// Frontend pages controller
-Route::get('/{slug?}', 'PageController@show');
-
-// Frontend pages controller
-Route::get('/{slug}/{subpage}', 'PageController@showSubPage');
-
-
 Route::post('/save-file-nurseris', 'AuthorizationController@SaveFileZooHatcherie');
 //Auth::routes();
 
@@ -272,3 +333,14 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 //Route::post('/loginAdmin', 'AuthController@login_admin');
 
 Route::get('/species_cite', 'ApiController@api_cites')->name('cite_species');
+
+// Frontend pages controller
+Route::get('/{slug?}', 'PageController@show');
+
+// Frontend pages controller
+Route::get('/{slug}/{subpage}', 'PageController@showSubPage');
+
+//crud Permit and Requeriment
+
+
+

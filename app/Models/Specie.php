@@ -14,7 +14,7 @@ class Specie extends Model
         'name_scientific',
         'name_common',
         'search_id',
-        //'qty',
+        'appendix',
         //'unity',
         // 'country_origin',
         //'permit_no',
@@ -26,7 +26,7 @@ class Specie extends Model
     {
         return $this->belongsToMany(Permit::class, 
                                     'permit_specie',
-                                    'permit_id',
-                                    'species_id')->withPivot('file_url', 'is_valid', 'qty');
+                                    'specie_id',
+                                    'permit_id')->withPivot('file_url', 'origin', 'origin_country', 'description', 'qty');
     }
 }

@@ -11,6 +11,8 @@ class PermitType extends Model
 
     protected $fillable = [
         'name',
+        'type',
+        'status'
     ];
 
     public function permits()
@@ -24,5 +26,10 @@ class PermitType extends Model
                                     'requeriment_permit_type',
                                     'permit_type_id',
                                     'requeriment_id');
+    }
+
+    public function departament()
+    {
+        return $this->belongsTo(Departament::class);
     }
 }

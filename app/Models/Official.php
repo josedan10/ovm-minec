@@ -6,8 +6,10 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class Official extends Authenticatable
+
+class Official extends Authenticatable implements JWTSubject
 {
     use HasFactory;
     use Notifiable;
@@ -16,16 +18,29 @@ class Official extends Authenticatable
         'username',
         'email',
         'role',
+        'is_active',
         'user_id',
         'password',
         'remember_token'
     ];
 
-    public function users()
+    public function user()
     {
-        return $this->hasOne(Users::class);
+        return $this->belongsTo(User::class);
     }
-    
+    public function permits()
+    {
+        return $this->hasMany(Permit::class);
+    }
+
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+    public function getJWTCustomClaims()
+    {
+        return [];
+    }
     /**
      * The attributes that should be hidden for arrays.
      *

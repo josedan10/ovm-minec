@@ -15,7 +15,9 @@ class CreatePermitTypesTable extends Migration
     {
         Schema::create('permit_types', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 255);
+            $table->text('name');
+            $table->enum('type', ['export', 'import', 'reexport'])->nullable();
+            $table->string('status', 255);
             $table->timestamps();
         });
     }

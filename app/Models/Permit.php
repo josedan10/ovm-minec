@@ -15,18 +15,21 @@ class Permit extends Model
         'special_conditions',
         'purpose',
         'status',
+        'stamp_number',
         'observations',
-        'transportation_way_origin',
-        'consignado_a_origin',
-        'origin_country',
-        'transportation_way_destiny',
-        'destiny_country',
-        'consignado_a_destiny',
-        'port_boarding_destiny',
-        'port_disembarkation_destiny',
+        'transportation_way',
+        'consigned_to',
+        'country',
+        'country_code',
+        'collected_time',
+        'landing_port',
+        'shipment_port',
         'destiny_place',
-        'place_departure',
-        'departure_date'
+        'departure_place',
+        'departure_date',
+        'created_at',
+        'updated_at',
+        'departament_id'
     ];
 
     public function species()
@@ -34,12 +37,17 @@ class Permit extends Model
         return $this->belongsToMany(Specie::class,
                                     'permit_specie',
                                     'permit_id',
-                                    'specie_id')->withPivot('file_url', 'is_valid', 'qty');
+                                    'specie_id')->withPivot('file_url', 'origin', 'origin_country', 'description', 'qty');
     }
     public function client()
     {
         
         return $this->belongsTo(Client::class);
+    }
+    public function official()
+    {
+        
+        return $this->belongsTo(Official::class);
     }
     public function permit_type()
     {
@@ -52,7 +60,13 @@ class Permit extends Model
         return $this->belongsToMany(Requeriment::class,
                                     'permit_requeriment',
                                     'permit_id',
-                                    'requeriment_id')->withPivot('file_url', 'is_valid', 'file_errors');
+                                    'requeriment_id')->withPivot('file_url', 'is_valid');
     }
+
+    public function formalitie()
+    {
+        return $this->belongsTo(Formalitie::class);
+    }
+
     
 }
